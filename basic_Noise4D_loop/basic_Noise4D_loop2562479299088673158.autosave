@@ -1,0 +1,50 @@
+OpenSimplexNoise noise;
+
+float zoff =0;
+float increaseframe = 0.01;
+float zIncreaseframe = 0.01;
+int numFrame = 60;
+float percent =0;
+void setup() {
+  size(640, 360, P2D);
+  noise = new OpenSimplexNoise();
+}
+
+
+void draw() {
+  background(0);
+
+  render(percent);
+
+  percent+=0.01;
+}
+
+
+void render(float percent) {
+  loadPixels();
+
+  float xoff=0;
+
+  float angle  = map(percent, 0, 1, 0, TWO_PI);
+  float sinoff = map(sin(angle), -1, 1, 0, 2);
+  float cosoff = map(cos(angle), -1, 1, 0, 2);
+
+  float detail = map(mouseX, 0, width, 0.04, 0.001);
+  noiseDetail(8, detail);
+  
+  for (int i=0; i <width; i++) {
+    xoff += 0.01;
+    float yoff = 0;
+
+    for (int j=0; j<height; j++) {
+      noStroke();
+      float alpha = (float)noise.eval(zoff, xoff, sinoff, cosoff)*255;
+      float bright = alpha >0 ? 255: 0;
+
+      pixels[i+j*width] = color(bright, 10, 20);
+    }
+  }
+  updatePixels();
+
+  zoff +=0.02;
+}
